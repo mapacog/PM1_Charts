@@ -102,7 +102,7 @@ d3.csv("PM1_PolicyTargetSetting.csv")
       type: "bar",
       name: "Projected Total Serious Injuries",
       marker: {
-        color: "rgba(84, 180, 216, 0.8)",
+        color: "rgba(242, 107, 56, 0.65)",
       },
       hovertemplate: "Projected Serious Injuries: %{y:.1f}<extra></extra>",
     };
@@ -125,7 +125,7 @@ d3.csv("PM1_PolicyTargetSetting.csv")
       type: "scatter",
       mode: "lines",
       name: "Trendline for Serious Injuries (5-Year Rolling Average)",
-      line: { width: 3, color: "rgb(250, 128, 114)" },
+      line: { width: 3, color: "rgb(77, 77, 79)" },
       hovertemplate: "Trendline: %{y:.1f}<extra></extra>",
     };
 

@@ -126,7 +126,7 @@ d3.csv("PM1_Viewer.csv")
       type: "bar",
       name: "Serious Injury Rate",
       marker: {
-        color: "rgba(84, 180, 216, 0.7)",
+        color: "rgba(242, 107, 56, 0.65)",
       },
       hovertemplate: "Serious Injury Rate: %{y:.3f}<extra></extra>",
     };
@@ -239,9 +239,9 @@ d3.csv("PM1_Viewer.csv")
       name: "Serious Injury Rate Trend Linear Fit",
       line: {
         width: 2,
-        color: "#ea4335",
+        color: "#4c4c4e",
       },
-      opacity: 0.7, // 70% opacity
+      opacity: 0.9, // 70% opacity
       hovertemplate: "Linear Fit: %{y:.3f}<extra></extra>",
     };
 
