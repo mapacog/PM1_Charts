@@ -32,7 +32,7 @@ d3.csv("PM1_Viewer.csv")
 
     // Separate offsets to avoid clutter
     const projLabelOffset = 0.1   // projection labels a bit above points
-    const targetLabelOffset = 0.7; // target labels higher above points
+    const targetLabelOffset = 0.1; // target labels higher above points
 
     rows.forEach((row) => {
       const year = parseInt(row["Year"], 10);

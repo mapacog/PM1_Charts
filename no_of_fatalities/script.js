@@ -11,14 +11,15 @@ function toNum(val) {
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     const years = [];
-    const seriousRate = [];
-    const seriousRate5yr = [];
+    const fatalities = [];
+    const fatal5yr = [];
     const projPast = [];
     const projCurrent = [];
     const targetPast = [];
+    const targetCurrent = [];
     const trend = [];
 
-    // For labels + leader lines
+    // For labels + leader lines (Current projection/target)
     const projLabelX = [];
     const projLabelY = [];
     const projLabelText = [];
@@ -27,49 +28,48 @@ d3.csv("PM1_Viewer.csv")
     const targetLabelY = [];
     const targetLabelText = [];
 
-    // Target (Current) needs its own X/Y so a single-year value still plots
+    // Dedicated arrays for Target (Current) so even a single year (2025) plots
     const targetCurrentX = [];
     const targetCurrentY = [];
 
     const shapes = [];
 
-    // Separate offsets to avoid clutter
-    const projLabelOffset = 0.1;  // projection labels a bit above points
-    const targetLabelOffset = 1.2; // target labels higher above points
+    // Offsets (slightly larger so labels sit above points clearly)
+    const projLabelOffset = 3.0;   // projection labels above markers
+    const targetLabelOffset = 3.5; // target labels above markers
 
     rows.forEach((row) => {
       const year = parseInt(row["Year"], 10);
       if (Number.isNaN(year)) return;
 
-      // include all years from 2006 upward
+      // Include all data from 2006 upward, including 2025
       if (year < 2006) return;
 
-      // some files might use "Serious Injury Rate (per 100M VMT)" instead
-      const srate =
-        toNum(row["Serious Injury Rate"]) ??
-        toNum(row["Serious Injury Rate (per 100M VMT)"]);
-
-      const srate5 = toNum(row["Serious Injury Rate (5-yr avg)"]);
-      const projP = toNum(row["Serious Injury Rate Projection (Past)"]);
-      const projC = toNum(row["Serious Injury Rate Projection (Current)"]);
-      const targP = toNum(row["Serious Injury Rate Target (Past)"]);
-      const targC = toNum(row["Serious Injury Rate Target (Current)"]);
-      const trendVal = toNum(row["Serious Injury Rate Trend"]);
+      const fat = toNum(row["Fatalities"]);
+      const fat5 = toNum(row["Fatalities (5-yr avg)"]);
+      const projP = toNum(row["Fatalities Projection (Past)"]);
+      const projC = toNum(row["Fatalities Projection (Current)"]);
+      const targP = toNum(row["Fatalities Target (Past)"]);
+      const targC = toNum(row["Fatalities Target (Current)"]);
+      const trendVal = toNum(row["Fatalities Trend"]);
 
       years.push(year);
-      seriousRate.push(srate);
-      seriousRate5yr.push(srate5);
+      fatalities.push(fat);
+      fatal5yr.push(fat5);
       projPast.push(projP);
       projCurrent.push(projC);
       targetPast.push(targP);
+      targetCurrent.push(targC);
       trend.push(trendVal);
 
-      // Labels + leader lines for Projection (Current)
+      // === Projection (Current) labels + dashed leader lines ===
       if (projC != null) {
         const yLabel = projC + projLabelOffset;
+
         projLabelX.push(year);
         projLabelY.push(yLabel);
-        projLabelText.push(projC.toFixed(3));
+        // keep decimals (one decimal place)
+        projLabelText.push(projC.toFixed(1));
 
         shapes.push({
           type: "line",
@@ -78,22 +78,23 @@ d3.csv("PM1_Viewer.csv")
           y0: projC,
           y1: yLabel,
           line: {
-            color: "black",
-            width: 1,
+            color: "#000000",
+            width: 1.4,
             dash: "dot",
           },
         });
       }
 
-      // Points + labels + leader lines for Target (Current)
+      // === Target (Current) markers + labels + dashed leader lines ===
       if (targC != null) {
+        // ensure this plots even if only 2025 has data
         targetCurrentX.push(year);
         targetCurrentY.push(targC);
 
         const yLabel = targC + targetLabelOffset;
         targetLabelX.push(year);
         targetLabelY.push(yLabel);
-        targetLabelText.push(targC.toFixed(3));
+        targetLabelText.push(targC.toFixed(1));
 
         shapes.push({
           type: "line",
@@ -103,67 +104,77 @@ d3.csv("PM1_Viewer.csv")
           y1: yLabel,
           line: {
             color: "rgb(0, 90, 130)",
-            width: 1,
+            width: 1.4,
             dash: "dot",
           },
         });
       }
     });
 
-    // === Trend Linear Fit from formula y = -0.0108*X + 1.1 ===
-    // X is index starting at 0 for the first year (2006)
+    // === Trend linear fit using the specified formula: y = -0.6 * X + 69.8 ===
+    // X is index starting at 0 for the first year (2006), so it naturally extends to 2025.
     const linearFit = years.map((year, idx) => {
-      const x = idx; // year index from 0
-      return -0.211 * x + 10.8;
+      const x = idx;
+      return -0.6 * x + 69.8;
     });
 
     // === Traces ===
 
-    // Bars: Serious Injury Rate
-    const barSeriousRate = {
+    // Bars: Fatalities (with labels inside at the bottom)
+    const barFatalities = {
       x: years,
-      y: seriousRate,
+      y: fatalities,
       type: "bar",
-      name: "Serious Injury Rate",
+      name: "Fatalities",
       marker: {
-        color: "rgba(242, 107, 56, 0.65)",
+        color: "rgba(84, 180, 216, 0.75)",
       },
-      hovertemplate: "Serious Injury Rate: %{y:.3f}<extra></extra>",
+      text: fatalities.map((v) => (v == null ? "" : v.toFixed(0))),
+      textposition: "inside",
+      insidetextanchor: "start", // bottom-inside of the bar
+      textfont: {
+        size: 12,
+        color: "#000000",
+        family: "Segoe UI, Arial, sans-serif",
+        // Plotly uses "bold" via separate style, we still put it here for emphasis
+        weight: "bold",
+      },
+      hovertemplate: "Fatalities: %{y:.0f}<extra></extra>",
     };
 
-    // 5-year average
+    // 5-year average line
     const line5yr = {
       x: years,
-      y: seriousRate5yr,
+      y: fatal5yr,
       type: "scatter",
       mode: "lines+markers",
-      name: "Serious Injury Rate (5-yr avg)",
+      name: "Fatalities (5-yr avg)",
       line: { width: 3, color: "rgb(0, 90, 130)" },
       marker: { size: 6 },
-      hovertemplate: "5-yr Avg: %{y:.3f}<extra></extra>",
+      hovertemplate: "5-yr Avg: %{y:.0f}<extra></extra>",
     };
 
     // Projection (Past) – circle markers + dotted line
-    const lineProjPast = {
+    const projPastLine = {
       x: years,
       y: projPast,
       type: "scatter",
       mode: "lines+markers",
-      name: "Serious Injury Rate Projection (Past)",
+      name: "Fatalities Projection (Past)",
       line: { width: 2, color: "lightgrey", dash: "dot" },
-      marker: { size: 6, color: "lightgrey" },
-      hovertemplate: "Projection (Past): %{y:.3f}<extra></extra>",
+      marker: { size: 7, color: "lightgrey" },
+      hovertemplate: "Projection (Past): %{y:.1f}<extra></extra>",
     };
 
-    // Projection (Current) – markers
-    const dotsProjCurrent = {
+    // Projection (Current) – markers only, keep decimals
+    const projCurrentDots = {
       x: years,
       y: projCurrent,
       type: "scatter",
       mode: "markers",
-      name: "Serious Injury Rate Projection (Current)",
+      name: "Fatalities Projection (Current)",
       marker: { size: 8, color: "black" },
-      hovertemplate: "Projection (Current): %{y:.3f}<extra></extra>",
+      hovertemplate: "Projection (Current): %{y:.1f}<extra></extra>",
     };
 
     // Projection (Current) labels
@@ -172,35 +183,39 @@ d3.csv("PM1_Viewer.csv")
       y: projLabelY,
       type: "scatter",
       mode: "text",
-      name: "Serious Injury Rate Projection (Current) Labels",
       text: projLabelText,
       textposition: "top center",
-      textfont: { size: 10, color: "black" },
+      textfont: {
+        size: 12,
+        color: "#000000",
+        family: "Segoe UI, Arial, sans-serif",
+        weight: "bold",
+      },
       hoverinfo: "skip",
       showlegend: false,
     };
 
     // Target (Past) – star markers + dotted line
-    const starsTargetPast = {
+    const targetPastLine = {
       x: years,
       y: targetPast,
       type: "scatter",
       mode: "lines+markers",
-      name: "Serious Injury Rate Target (Past)",
+      name: "Fatalities Target (Past)",
       line: { width: 2, color: "lightgrey", dash: "dot" },
-      marker: { size: 10, color: "lightgrey", symbol: "star" },
-      hovertemplate: "Target (Past): %{y:.3f}<extra></extra>",
+      marker: { size: 11, color: "lightgrey", symbol: "star" },
+      hovertemplate: "Target (Past): %{y:.1f}<extra></extra>",
     };
 
-    // Target (Current) – star markers (only where we have data)
-    const starsTargetCurrent = {
+    // Target (Current) – star markers (only for non-null years, e.g., 2025)
+    const targetCurrentStars = {
       x: targetCurrentX,
       y: targetCurrentY,
       type: "scatter",
       mode: "markers",
-      name: "Serious Injury Rate Target (Current)",
-      marker: { size: 11, color: "rgb(0, 90, 130)", symbol: "star" },
-      hovertemplate: "Target (Current): %{y:.3f}<extra></extra>",
+      name: "Fatalities Target (Current)",
+      marker: { size: 12, color: "rgb(0, 90, 130)", symbol: "star" },
+      hovertemplate: "Target (Current): %{y:.1f}<extra></extra>",
     };
 
     // Target (Current) labels
@@ -209,46 +224,50 @@ d3.csv("PM1_Viewer.csv")
       y: targetLabelY,
       type: "scatter",
       mode: "text",
-      name: "Serious Injury Rate Target (Current) Labels",
       text: targetLabelText,
       textposition: "top center",
-      textfont: { size: 10, color: "rgb(0, 90, 130)" },
+      textfont: {
+        size: 12,
+        color: "rgb(0, 90, 130)",
+        family: "Segoe UI, Arial, sans-serif",
+        weight: "bold",
+      },
       hoverinfo: "skip",
       showlegend: false,
     };
 
-    // Serious Injury Rate Trend as AREA (from CSV)
+    // Fatalities Trend as area (from CSV)
     const areaTrend = {
       x: years,
       y: trend,
       type: "scatter",
       mode: "lines",
-      name: "Serious Injury Rate Trend",
+      name: "Fatalities Trend",
       line: { width: 2, color: "rgb(0, 180, 140)" },
       fill: "tozeroy",
-      fillcolor: "rgba(0, 180, 140, 0.2)", // ~30% opacity area
-      hovertemplate: "Trend: %{y:.3f}<extra></extra>",
+      fillcolor: "rgba(0, 180, 140, 0.25)",
+      hovertemplate: "Trend: %{y:.1f}<extra></extra>",
     };
 
-    // Serious Injury Rate Trend Linear Fit 
+    // Fatalities Trend Linear Fit (red) – now extends to 2025
     const lineLinearFit = {
       x: years,
       y: linearFit,
       type: "scatter",
       mode: "lines",
-      name: "Serious Injury Rate Trend Linear Fit",
+      name: "Fatalities Trend Linear Fit",
       line: {
-        width: 2,
-        color: "#4c4c4e",
+        width: 2.4,
+        color: "#ea4335",
       },
-      opacity: 0.9, // 90% opacity
-      hovertemplate: "Linear Fit: %{y:.3f}<extra></extra>",
+      opacity: 0.75,
+      hovertemplate: "Linear Fit: %{y:.1f}<extra></extra>",
     };
 
+    // === Layout ===
     const layout = {
       title: "",
       xaxis: {
-        title: "",
         tickmode: "linear",
         dtick: 1,
         showgrid: false,
@@ -256,20 +275,19 @@ d3.csv("PM1_Viewer.csv")
         tickangle: -45,
       },
       yaxis: {
-        title: "Serious Injury Rate (per 100M VMT)",
+        title: "Number of Fatalities",
         rangemode: "tozero",
         showgrid: true,
       },
-      bargap: 0.12,
+      bargap: 0.15,
       hovermode: "x unified",
       legend: {
         orientation: "v",
         x: 1.02,
         y: 1,
       },
-      margin: { l: 60, r: 220, t: 40, b: 70 },
-
-      // dashed leader lines for projection/target labels
+      margin: { l: 60, r: 240, t: 40, b: 70 },
+      // Dashed leader lines for Projection (Current) & Target (Current)
       shapes: shapes,
     };
 
@@ -280,9 +298,9 @@ d3.csv("PM1_Viewer.csv")
       modeBarButtonsToKeep: ["toImage"],
       toImageButtonOptions: {
         format: "png",
-        filename: "serious-injury-rate-100m-vmt",
-        width: 1200,
-        height: 600,
+        filename: "fatalities-number-chart",
+        width: 1400,
+        height: 650,
         scale: 1,
       },
     };
@@ -290,13 +308,13 @@ d3.csv("PM1_Viewer.csv")
     Plotly.newPlot(
       "chart",
       [
-        barSeriousRate,
+        barFatalities,
         line5yr,
-        lineProjPast,
-        dotsProjCurrent,
+        projPastLine,
+        projCurrentDots,
         projCurrentLabels,
-        starsTargetPast,
-        starsTargetCurrent,
+        targetPastLine,
+        targetCurrentStars,
         targetCurrentLabels,
         areaTrend,
         lineLinearFit,
