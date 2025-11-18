@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();

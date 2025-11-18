@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -7,7 +6,6 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Load CSV and build chart ===
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     const years = [];
@@ -34,7 +32,6 @@ d3.csv("PM1_Viewer.csv")
 
     const shapes = [];
 
-    // Offsets (slightly larger so labels sit above points clearly)
     const projLabelOffset = 3.0;   // projection labels above markers
     const targetLabelOffset = 3.5; // target labels above markers
 

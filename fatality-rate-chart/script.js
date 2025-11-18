@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -7,7 +6,6 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Load CSV and build chart ===
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     const years = [];
@@ -19,7 +17,6 @@ d3.csv("PM1_Viewer.csv")
     const targetCurrent = [];
     const trend = [];
 
-    // For labels + leader lines
     const projLabelX = [];
     const projLabelY = [];
     const projLabelText = [];
@@ -30,7 +27,6 @@ d3.csv("PM1_Viewer.csv")
 
     const shapes = [];
 
-    // Separate offsets to avoid clutter
     const projLabelOffset = 0.1   // projection labels a bit above points
     const targetLabelOffset = 0.1; // target labels higher above points
 
@@ -38,7 +34,6 @@ d3.csv("PM1_Viewer.csv")
       const year = parseInt(row["Year"], 10);
       if (Number.isNaN(year)) return;
 
-      // include all years from 2006 upward
       if (year < 2006) return;
 
       const frate = toNum(row["Fatality Rate"]);

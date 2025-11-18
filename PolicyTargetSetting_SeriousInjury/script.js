@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -7,7 +6,7 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// (Regression helper unused but kept for structural consistency)
+// (Regression helper unused but i kept it for structural consistency)
 function linearRegression(xs, ys) {
   const n = xs.length;
   if (n === 0) return { m: 0, b: 0 };
@@ -34,7 +33,6 @@ function linearRegression(xs, ys) {
   return { m, b };
 }
 
-// === Load CSV and build chart ===
 d3.csv("PM1_PolicyTargetSetting.csv")
   .then(function (rows) {
     const years = [];

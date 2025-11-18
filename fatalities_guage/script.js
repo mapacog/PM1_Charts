@@ -1,6 +1,3 @@
-// script.js  (Fatalities Gauge)
-
-// === Helper: safe numeric conversion ===
 function toNum(v) {
   if (v === null || v === undefined) return null;
   const c = v.toString().replace(/,/g, "").trim();
@@ -9,7 +6,6 @@ function toNum(v) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Load CSV and build Fatalities gauge ===
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     if (!rows || !rows.length) {
@@ -17,7 +13,6 @@ d3.csv("PM1_Viewer.csv")
       return;
     }
 
-    // Use year 2024, 5-yr avg vs Target (Past)
     const row2024 = rows.find(r => parseInt(r["Year"], 10) === 2024);
     if (!row2024) {
       console.error("No 2024 row found in PM1_Viewer.csv");
@@ -32,7 +27,6 @@ d3.csv("PM1_Viewer.csv")
       return;
     }
 
-    // Set gauge max a bit above the larger of obs/target
     const axisMax = Math.max(observed, targetPast) * 1.25;
 
     const data = [
@@ -56,13 +50,11 @@ d3.csv("PM1_Viewer.csv")
           },
           bar: { color: "rgba(84, 180, 216, 0.7)" },
 
-          // Green = good, Yellow = caution
           steps: [
             { range: [0, targetPast],       color: "rgba(111, 207, 151, 0.35)" },
             { range: [targetPast, axisMax], color: "rgba(255, 236, 179, 0.8)" },
           ],
 
-          // Red line showing target threshold
           threshold: {
             line: { color: "#ea4335", width: 5 },
             value: targetPast,
@@ -96,7 +88,6 @@ d3.csv("PM1_Viewer.csv")
       ],
     };
 
-    // Plot — now with NO Plotly logo
     const config = {
       responsive: true,
       displayModeBar: true,

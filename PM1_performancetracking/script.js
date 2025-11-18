@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -7,7 +6,6 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Inject minimal CSS for the table (only once) ===
 (function injectPm1TableCss() {
   if (document.getElementById("pm1-table-style")) return;
   const style = document.createElement("style");
@@ -60,7 +58,6 @@ function toNum(val) {
   document.head.appendChild(style);
 })();
 
-// === Load CSV and build PM1 Performance Tracking table ===
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     if (!rows || !rows.length) {
@@ -91,7 +88,7 @@ d3.csv("PM1_Viewer.csv")
       return;
     }
 
-    // All measures are "lower is better"
+    // When measures are "lower it is indicative of  improvement"
     const measures = [
       {
         label: "Fatalities (#)",
@@ -135,7 +132,7 @@ d3.csv("PM1_Viewer.csv")
       },
     ];
 
-    // Build row data objects
+    // Building row data objects
     const tableRows = measures.map((m) => {
       const baselineVal = toNum(baselineRow[m.baselineCol]);
       const projectedVal = toNum(projRow[m.projectedCol]);
@@ -170,7 +167,7 @@ d3.csv("PM1_Viewer.csv")
       };
     });
 
-    // Render HTML table
+    // Rendering HTML table
     const container = document.getElementById("pm1-table");
     if (!container) {
       console.error('No element with id="pm1-table" found in the DOM.');

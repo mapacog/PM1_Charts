@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -7,7 +6,7 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Load CSV and build chart ===
+
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     const years = [];

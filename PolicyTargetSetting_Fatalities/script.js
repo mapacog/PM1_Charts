@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -7,7 +6,7 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// (Regression helper now unused but kept for structure consistency)
+// (Regression helper now unused but i kept it for structure consistency)
 function linearRegression(xs, ys) {
   const n = xs.length;
   if (n === 0) return { m: 0, b: 0 };
@@ -34,13 +33,12 @@ function linearRegression(xs, ys) {
   return { m, b };
 }
 
-// === Load CSV and build chart ===
 d3.csv("PM1_PolicyTargetSetting.csv")
   .then(function (rows) {
     const years = [];
     const projFatal = [];
     const rollingFatal = [];   // "Fatalities (5-Year Rolling Average)"
-    const trendFatal = [];     // "Trendline for Fatalities (5 - Year Rolling Average)" from CSV
+    const trendFatal = [];     // "Trendline for Fatalities (5 - Year Rolling Average)" from our PM1 CSV
     const fatalTargets = [];   // "Fatalities Target"
 
     // Arrays for labels + leader lines for Fatalities Target
@@ -54,7 +52,7 @@ d3.csv("PM1_PolicyTargetSetting.csv")
       const year = parseInt(row["Year"], 10);
       if (Number.isNaN(year)) return;
 
-      // Keep 2022–2044 inclusive
+      // Keeping 2022–2044 inclusive
       if (year < 2022 || year > 2044) return;
 
       const proj = toNum(row["Projected Total Fatalities"]);

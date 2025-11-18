@@ -1,6 +1,3 @@
-// script.js  (Fatalities Gauge)
-
-// === Helper: safe numeric conversion ===
 function toNum(v) {
   if (v === null || v === undefined) return null;
   const c = v.toString().replace(/,/g, "").trim();
@@ -9,7 +6,6 @@ function toNum(v) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Load CSV and build Fatalities gauge ===
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     if (!rows || !rows.length) {
@@ -32,7 +28,7 @@ d3.csv("PM1_Viewer.csv")
       return;
     }
 
-    // Set gauge max a bit above the larger of obs/target
+    // Setting gauge max a bit above the larger of obs/target
     const axisMax = Math.max(observed, targetPast) * 1.25;
 
     const data = [
@@ -42,7 +38,7 @@ d3.csv("PM1_Viewer.csv")
         value: observed,
         number: {
           valueformat: ".1f",
-          font: { size: 20 }   // slightly reduced for cleaner look
+          font: { size: 20 }   // It is slightly reduced for cleaner look
         },
        
         gauge: {
@@ -56,7 +52,6 @@ d3.csv("PM1_Viewer.csv")
           },
           bar: { color: "rgba(126, 200, 160, 0.75)" },
 
-          // Green = good, Yellow = caution
           steps: [
             { range: [0, targetPast],       color: "rgba(111, 207, 151, 0.35)" },
             { range: [targetPast, axisMax], color: "rgba(255, 236, 179, 0.8)" },
@@ -74,7 +69,6 @@ d3.csv("PM1_Viewer.csv")
       },
     ];
 
-  
     const layout = {
       margin: { t: 80, b: 40, l: 20, r: 20 },
       height: 280,
@@ -96,13 +90,12 @@ d3.csv("PM1_Viewer.csv")
       ],
     };
 
-    // Plot — now with NO Plotly logo
     const config = {
       responsive: true,
       displayModeBar: true,
       scrollZoom: true,
       editable: false,
-      displaylogo: false  // 🔥 This removes the Plotly trademark
+      displaylogo: false  // This removes the Plotly trademark
     };
 
     Plotly.newPlot("chart", data, layout, config);
