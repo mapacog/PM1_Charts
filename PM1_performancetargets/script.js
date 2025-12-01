@@ -66,9 +66,9 @@ d3.csv("PM1_Viewer.csv")
       }
     });
 
-    const baselineYear = 2023; // Baseline
-    const projYear = 2024;     // Projected
-    const targetYear = 2025;   // Target
+    const baselineYear = 2024; // Baseline
+    const projYear = 2025;     // Projected
+    const targetYear = 2026;   // Target
 
     const baselineRow = byYear[baselineYear];
     const projRow = byYear[projYear];
@@ -76,7 +76,7 @@ d3.csv("PM1_Viewer.csv")
 
     if (!baselineRow || !projRow || !targetRow) {
       console.error(
-        "Missing one of the required years: 2023 (baseline), 2024 (projected), 2025 (target)."
+        "Missing one of the required years: 2024 (baseline), 2025 (projected), 2026 (target)."
       );
       return;
     }
