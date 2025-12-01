@@ -12,7 +12,6 @@ body {
   padding: 16px 16px 32px;
 }
 
-/* Page title (two-line: main + subtitle) */
 .page-title {
   text-align: left;
   margin: 0 0 8px;
@@ -35,7 +34,6 @@ body {
   height: 600px;
 }
 
-/* Data table panel (not used on gauges, but harmless) */
 .panel {
   margin-top: 12px;
   font-size: 0.85rem;

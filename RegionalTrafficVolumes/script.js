@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -7,7 +6,6 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Load CSV and build Regional Traffic Volumes chart ===
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     if (!rows || !rows.length) {
@@ -15,7 +13,7 @@ d3.csv("PM1_Viewer.csv")
       return;
     }
 
-    // Handle possible slight differences in column names
+    // Handles possible slight differences in column naming
     const cols = Object.keys(rows[0]);
     function findCol(label) {
       return cols.find((c) => c.trim() === label) || label;

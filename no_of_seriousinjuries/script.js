@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -7,7 +6,6 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Load CSV and build Serious Injuries chart ===
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     const years = [];
@@ -236,7 +234,7 @@ d3.csv("PM1_Viewer.csv")
       showlegend: false,
     };
 
-    // Serious Injuries Trend as area (from CSV)
+    // Serious Injuries Trend as area (from our CSV)
     const areaTrend = {
       x: years,
       y: trend,

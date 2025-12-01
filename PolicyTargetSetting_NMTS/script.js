@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -34,7 +33,6 @@ function linearRegression(xs, ys) {
   return { m, b };
 }
 
-// === Load CSV and build NMT Policy Target Setting chart ===
 d3.csv("PM1_PolicyTargetSetting.csv")
   .then(function (rows) {
     const years = [];

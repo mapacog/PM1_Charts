@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -7,7 +6,6 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Inject minimal CSS for the table (only once) ===
 (function injectPm1TableCss() {
   if (document.getElementById("pm1-table-style")) return;
   const style = document.createElement("style");
@@ -52,7 +50,6 @@ function toNum(val) {
   document.head.appendChild(style);
 })();
 
-// === Load CSV and build MAPA PM1 Performance Targets table ===
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     if (!rows || !rows.length) {
@@ -69,7 +66,6 @@ d3.csv("PM1_Viewer.csv")
       }
     });
 
-    // Years used in the table header
     const baselineYear = 2023; // Baseline
     const projYear = 2024;     // Projected
     const targetYear = 2025;   // Target

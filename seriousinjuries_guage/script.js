@@ -1,6 +1,3 @@
-// script.js  (Fatalities Gauge)
-
-// === Helper: safe numeric conversion ===
 function toNum(v) {
   if (v === null || v === undefined) return null;
   const c = v.toString().replace(/,/g, "").trim();
@@ -9,7 +6,6 @@ function toNum(v) {
   return Number.isNaN(n) ? null : n;
 }
 
-// === Load CSV and build Fatalities gauge ===
 d3.csv("PM1_Viewer.csv")
   .then(function (rows) {
     if (!rows || !rows.length) {
@@ -32,7 +28,7 @@ d3.csv("PM1_Viewer.csv")
       return;
     }
 
-    // Set gauge max a bit above the larger of obs/target
+    // Setting gauge max a bit above the larger of obs/target
     const axisMax = Math.max(observed, targetPast) * 1.25;
 
     const data = [
@@ -96,13 +92,13 @@ d3.csv("PM1_Viewer.csv")
       ],
     };
 
-    // Plot — now with NO Plotly logo
+    
     const config = {
       responsive: true,
       displayModeBar: true,
       scrollZoom: true,
       editable: false,
-      displaylogo: false  // 🔥 This removes the Plotly trademark
+      displaylogo: false  // his removes the Plotly trademark
     };
 
     Plotly.newPlot("chart", data, layout, config);

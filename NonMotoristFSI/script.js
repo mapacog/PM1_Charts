@@ -1,4 +1,3 @@
-// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -67,7 +66,7 @@ d3.csv("PM1_Viewer.csv")
       if (Number.isNaN(year)) return;
 
       // Only show 2006–2025
-      if (year < 2006 || year > 2025) return;
+      if (year < 2006 || year > 2027) return;
 
       const nmVal      = toNum(row[COL_NONMOTOR]);
       const nm5Val     = toNum(row[COL_NONMOTOR_5YR]);
