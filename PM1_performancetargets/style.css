@@ -3,19 +3,19 @@ body {
     sans-serif;
   margin: 0;
   padding: 0;
-  background: #ffffff;
+  background: #f0f0f0;
 }
 
 #page {
-  max-width: 1200px;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 16px 16px 32px;
+  padding: 10px 10px 20px;
 }
 
 h1 {
   text-align: left;
-  margin: 0 0 12px;
-  font-size: 2rem;
+  margin: 0 0 8px;
+  font-size: 0.95rem;
   color: #005a5f;
 }
 
@@ -28,7 +28,7 @@ h1 {
 /* Data table panel */
 .panel {
   margin-top: 12px;
-  font-size: 0.85rem;
+  font-size: 0.6rem;
 }
 
 .hidden {
@@ -54,5 +54,5 @@ h1 {
 }
 
 #data-table th {
-  background: #f3f3f3;
+  background: #f0f0f0;
 }

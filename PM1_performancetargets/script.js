@@ -20,7 +20,7 @@ function toNum(val) {
       width: 100%;
       border-collapse: collapse;
       border-spacing: 0;
-      font-size: 0.95rem;
+      font-size: 0.8rem;
     }
     .pm1-table thead {
       background-color: #005a5f;
