@@ -24,10 +24,8 @@ body {
 
 .page-title .subtitle {
   display: block;
-  font-size: 1rem; 
+  font-size: 1.2rem; 
   color: #005a5f;           /* smaller subtitle line */
-  font-weight: 400;
-  color: #333333;
 }
 
 /* Chart container */
