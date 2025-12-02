@@ -12,6 +12,7 @@ body {
   padding: 16px 16px 32px;
 }
 
+/* Page title (two-line: main + subtitle) */
 .page-title {
   text-align: left;
   margin: 0 0 8px;
@@ -23,9 +24,8 @@ body {
 
 .page-title .subtitle {
   display: block;
-  font-size: 1rem;            /* smaller subtitle line */
-  font-weight: 400;
-  color: #333333;
+  font-size: 1.2rem; 
+  color: #005a5f;           /* smaller subtitle line */
 }
 
 /* Chart container */
