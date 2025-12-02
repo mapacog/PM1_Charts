@@ -24,9 +24,8 @@ body {
 
 .page-title .subtitle {
   display: block;
-  font-size: 1rem;            /* smaller subtitle line */
-  font-weight: 400;
-  color: #333333;
+  font-size: 1.2rem; 
+  color: #005a5f;           /* smaller subtitle line */
 }
 
 /* Chart container */
@@ -35,7 +34,6 @@ body {
   height: 600px;
 }
 
-/* Data table panel (not used on gauges, but harmless) */
 .panel {
   margin-top: 12px;
   font-size: 0.85rem;
