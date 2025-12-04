@@ -6,7 +6,7 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// Simple linear regression y = m*x + b
+// (Regression helper now unused but i kept it for structure consistency)
 function linearRegression(xs, ys) {
   const n = xs.length;
   if (n === 0) return { m: 0, b: 0 };
@@ -37,6 +37,7 @@ d3.csv("PM1_PolicyTargetSetting.csv")
   .then(function (rows) {
     const years = [];
     const projNMT = [];        // "Projected Total NMT FSI"
+    const trendNMT = [];     // "Trendline for NMT FSI (5 - Year Rolling Average)" from our PM1 CSV
     const rollingNMT = [];     // "NMT FSI (5-Year Rolling Average)"
     const nmtTargets = [];     // "NMT FSI Targets"
 
@@ -56,11 +57,13 @@ d3.csv("PM1_PolicyTargetSetting.csv")
 
       const proj = toNum(row["Projected Total NMT FSI"]);
       const roll = toNum(row["NMT FSI (5-Year Rolling Average)"]);
+      const trend = toNum(row["Trendline for Non-Motorist Fatal and Serious Injuries (5 - Year Rolling Average)"]);
       const tgt  = toNum(row["NMT FSI Targets"]);
 
       years.push(year);
       projNMT.push(proj);
       rollingNMT.push(roll);
+      trendNMT.push(trend);
       nmtTargets.push(tgt);
 
       // Target labels + dotted leader lines
