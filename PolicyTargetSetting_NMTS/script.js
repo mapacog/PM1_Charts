@@ -1,3 +1,4 @@
+// === Helper: safe numeric conversion ===
 function toNum(val) {
   if (val === null || val === undefined) return null;
   const cleaned = val.toString().replace(/,/g, "").trim();
@@ -6,7 +7,7 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-// (Regression helper now unused but i kept it for structure consistency)
+// (Regression helper now unused but kept for structure consistency)
 function linearRegression(xs, ys) {
   const n = xs.length;
   if (n === 0) return { m: 0, b: 0 };
@@ -33,13 +34,14 @@ function linearRegression(xs, ys) {
   return { m, b };
 }
 
+// === Load CSV and build NMT Policy Target Setting chart ===
 d3.csv("PM1_PolicyTargetSetting.csv")
   .then(function (rows) {
     const years = [];
-    const projNMT = [];        // "Projected Total NMT FSI"
-    const trendNMT = [];     // "Trendline for NMT FSI (5 - Year Rolling Average)" from our PM1 CSV
-    const rollingNMT = [];     // "NMT FSI (5-Year Rolling Average)"
-    const nmtTargets = [];     // "NMT FSI Targets"
+    const projNMT = [];    // "Projected Total NMT FSI"
+    const rollingNMT = []; // "NMT FSI (5-Year Rolling Average)"
+    const trendNMT = [];   // "Trendline for Non-Motorist Fatal and Serious Injuries (5 - Year Rolling Average)"
+    const nmtTargets = []; // "NMT FSI Targets"
 
     // Arrays for labels + leader lines for NMT FSI Targets
     const labelX = [];
@@ -55,10 +57,12 @@ d3.csv("PM1_PolicyTargetSetting.csv")
       // Keep 2022–2044 inclusive
       if (year < 2022 || year > 2044) return;
 
-      const proj = toNum(row["Projected Total NMT FSI"]);
-      const roll = toNum(row["NMT FSI (5-Year Rolling Average)"]);
-      const trend = toNum(row["Trendline for Non-Motorist Fatal and Serious Injuries (5 - Year Rolling Average)"]);
-      const tgt  = toNum(row["NMT FSI Targets"]);
+      const proj  = toNum(row["Projected Total NMT FSI"]);
+      const roll  = toNum(row["NMT FSI (5-Year Rolling Average)"]);
+      const trend = toNum(
+        row["Trendline for Non-Motorist Fatal and Serious Injuries (5 - Year Rolling Average)"]
+      );
+      const tgt   = toNum(row["NMT FSI Targets"]);
 
       years.push(year);
       projNMT.push(proj);
@@ -89,21 +93,6 @@ d3.csv("PM1_PolicyTargetSetting.csv")
       }
     });
 
-    // === Compute linear trend from NMT FSI (5-Year Rolling Average) ===
-    // Use index (0,1,2,...) as X so spacing is uniform.
-    const xsForFit = [];
-    const ysForFit = [];
-    for (let i = 0; i < years.length; i++) {
-      if (rollingNMT[i] != null) {
-        xsForFit.push(i);
-        ysForFit.push(rollingNMT[i]);
-      }
-    }
-    const { m, b } = linearRegression(xsForFit, ysForFit);
-
-    // Trendline values for every year in the chart
-    const trendLine = years.map((yr, idx) => m * idx + b);
-
     // === Traces ===
 
     // Bars: Projected Total NMT FSI
@@ -129,10 +118,10 @@ d3.csv("PM1_PolicyTargetSetting.csv")
       hovertemplate: "5-yr Rolling Avg: %{y:.1f}<extra></extra>",
     };
 
-    // RED linear trendline computed from the rolling-average data
+    // RED trendline: directly from CSV Trendline column
     const lineTrend = {
       x: years,
-      y: trendLine,
+      y: trendNMT,
       type: "scatter",
       mode: "lines",
       name: "Trendline for NMT FSI (5-Year Rolling Average)",
