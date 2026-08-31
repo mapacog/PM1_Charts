@@ -7,7 +7,7 @@ function toNum(val) {
 }
 
 // === Load CSV and build Non-motorist Fatal & Serious Injuries chart ===
-d3.csv("PM1_Viewer.csv")
+d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
   .then(function (rows) {
     if (!rows || !rows.length) {
       console.error("CSV appears empty or failed to load.");
@@ -55,8 +55,16 @@ d3.csv("PM1_Viewer.csv")
     const shapes = [];
 
     // Label offsets so values sit clearly above markers
-    const projLabelOffset = 3.0;
-    const targetLabelOffset = 3.5;
+    const projLabelOffset = 6.0;
+    const targetLabelOffset = 12.0;
+
+    const activeEndYear = Math.max(...rows
+      .filter(row => [
+        COL_NONMOTOR, COL_NONMOTOR_5YR, COL_PROJ_PAST, COL_PROJ_CURR,
+        COL_TGT_PAST, COL_TGT_CURR, COL_TREND,
+      ].some(column => toNum(row[column]) != null))
+      .map(row => parseInt(row[COL_YEAR], 10))
+      .filter(year => !Number.isNaN(year)));
 
     rows.forEach((row) => {
       const rawYear = row[COL_YEAR];
@@ -65,8 +73,7 @@ d3.csv("PM1_Viewer.csv")
       const year = parseInt(rawYear, 10);
       if (Number.isNaN(year)) return;
 
-      // Only show 2006–2025
-      if (year < 2006 || year > 2027) return;
+      if (year < 2006 || year > activeEndYear) return;
 
       const nmVal      = toNum(row[COL_NONMOTOR]);
       const nm5Val     = toNum(row[COL_NONMOTOR_5YR]);
@@ -141,7 +148,7 @@ d3.csv("PM1_Viewer.csv")
 
     // === Traces ===
 
-    // Bars: Non-motorist Fatal & Serious Injuries
+    // Bars: Non-motorist Fatal & Serious Injuries (with bottom-inside labels)
     const barNonmotor = {
       x: years,
       y: nm,
@@ -150,6 +157,15 @@ d3.csv("PM1_Viewer.csv")
       marker: {
         // Distinct green (different from fatalities blue and serious-injury orange)
         color: "rgba(126, 200, 160, 0.75)",
+      },
+      text: nm.map((v) => (v == null ? "" : v.toFixed(0))),
+      textposition: "inside",
+      insidetextanchor: "start",
+      textfont: {
+        size: 12,
+        color: "#000000",
+        family: "Segoe UI, Arial, sans-serif",
+        weight: "bold",
       },
       hovertemplate: "Nonmotorist FSI: %{y:.0f}<extra></extra>",
     };
@@ -280,6 +296,7 @@ d3.csv("PM1_Viewer.csv")
     const layout = {
       title: "",
       xaxis: {
+        range: [years[0] - 0.5, activeEndYear + 0.5],
         tickmode: "linear",
         dtick: 1,
         showgrid: false,

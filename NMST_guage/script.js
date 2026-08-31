@@ -6,27 +6,34 @@ function toNum(v) {
   return Number.isNaN(n) ? null : n;
 }
 
-d3.csv("PM1_Viewer.csv")
+d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
   .then(function (rows) {
     if (!rows || !rows.length) {
       console.error("PM1_Viewer.csv appears empty or failed to load.");
       return;
     }
 
-    // Use year 2024, 5-yr avg vs Target (Past)
-    const row2024 = rows.find(r => parseInt(r["Year"], 10) === 2024);
-    if (!row2024) {
-      console.error("No 2024 row found in PM1_Viewer.csv");
+    const mainYear = 2025;
+    const observedRow = rows.find(r => parseInt(r["Year"], 10) === mainYear);
+    if (!observedRow) {
+      console.error("No observed nonmotorist rolling-average row found in PM1_Viewer.csv");
       return;
     }
 
-    const observed   = toNum(row2024["Nonmotorist Fatal & Serious Injuries (5-yr avg)"]);
-    const targetPast = toNum(row2024["Nonmotorists Target (Past)"]);
+    const observedYear = mainYear;
+    const observed   = toNum(observedRow["Nonmotorist Fatal & Serious Injuries (5-yr avg)"]);
+    const targetPast =
+      toNum(observedRow["Nonmotorists Target (Current)"]) ??
+      toNum(observedRow["Nonmotorists Target (Past)"]);
 
     if (observed == null || targetPast == null) {
-      console.error("Missing observed or target values for fatalities in 2024.");
+      console.error(`Missing observed or past-target nonmotorist FSI for ${observedYear}.`);
       return;
     }
+
+    document.title = `Nonmotorist FSI (5-Year Rolling Avg, ${observedYear})`;
+    const subtitle = document.querySelector(".subtitle");
+    if (subtitle) subtitle.textContent = `5-Year Rolling Avg, ${observedYear}`;
 
     // Setting gauge max a bit above the larger of obs/target
     const axisMax = Math.max(observed, targetPast) * 1.25;
@@ -64,15 +71,15 @@ d3.csv("PM1_Viewer.csv")
           },
         },
         hovertemplate:
-          "Observed (5-yr avg, 2024): %{value:.1f}<br>" +
+          `Observed (5-yr avg, ${observedYear}): %{value:.1f}<br>` +
           `Target:${targetPast.toFixed(1)}<extra></extra>`
       },
     ];
 
     const layout = {
+      autosize: true,
       margin: { t: 80, b: 40, l: 20, r: 20 },
       height: 280,
-      width: 420,
       annotations: [
         {
           x: 0.5,

@@ -6,26 +6,34 @@ function toNum(v) {
   return Number.isNaN(n) ? null : n;
 }
 
-d3.csv("PM1_Viewer.csv")
+d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
   .then(function (rows) {
     if (!rows || !rows.length) {
       console.error("PM1_Viewer.csv appears empty or failed to load.");
       return;
     }
 
-    const row2024 = rows.find(r => parseInt(r["Year"], 10) === 2024);
-    if (!row2024) {
-      console.error("No 2024 row found in PM1_Viewer.csv");
+    const mainYear = 2025;
+    const observedRow = rows.find(r => parseInt(r["Year"], 10) === mainYear);
+    if (!observedRow) {
+      console.error("No observed fatality rolling-average row found in PM1_Viewer.csv");
       return;
     }
 
-    const observed   = toNum(row2024["Fatalities (5-yr avg)"]);
-    const targetPast = toNum(row2024["Fatalities Target (Past)"]);
+    const observedYear = mainYear;
+    const observed   = toNum(observedRow["Fatalities (5-yr avg)"]);
+    const targetPast =
+      toNum(observedRow["Fatalities Target (Current)"]) ??
+      toNum(observedRow["Fatalities Target (Past)"]);
 
     if (observed == null || targetPast == null) {
-      console.error("Missing observed or target values for fatalities in 2024.");
+      console.error(`Missing observed or past-target fatalities for ${observedYear}.`);
       return;
     }
+
+    document.title = `Fatalities (5-Year Rolling Avg, ${observedYear})`;
+    const subtitle = document.querySelector(".subtitle");
+    if (subtitle) subtitle.textContent = `5-Year Rolling Avg, ${observedYear}`;
 
     const axisMax = Math.max(observed, targetPast) * 1.25;
 
@@ -61,16 +69,16 @@ d3.csv("PM1_Viewer.csv")
           },
         },
         hovertemplate:
-          "Observed (5-yr avg, 2024): %{value:.1f}<br>" +
+          `Observed (5-yr avg, ${observedYear}): %{value:.1f}<br>` +
           `Target:${targetPast.toFixed(1)}<extra></extra>`
       },
     ];
 
   
     const layout = {
+      autosize: true,
       margin: { t: 80, b: 40, l: 20, r: 20 },
       height: 280,
-      width: 420,
       annotations: [
         {
           x: 0.5,

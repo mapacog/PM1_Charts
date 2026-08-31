@@ -50,7 +50,7 @@ function toNum(val) {
   document.head.appendChild(style);
 })();
 
-d3.csv("PM1_Viewer.csv")
+d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
   .then(function (rows) {
     if (!rows || !rows.length) {
       console.error("PM1_Viewer.csv appears empty or failed to load.");
@@ -66,9 +66,9 @@ d3.csv("PM1_Viewer.csv")
       }
     });
 
-    const baselineYear = 2024; // Baseline
-    const projYear = 2025;     // Projected
-    const targetYear = 2026;   // Target
+    const baselineYear = 2025; // 2021–2025 rolling baseline
+    const projYear = 2026;     // Projected
+    const targetYear = 2027;   // Target
 
     const baselineRow = byYear[baselineYear];
     const projRow = byYear[projYear];
@@ -76,7 +76,7 @@ d3.csv("PM1_Viewer.csv")
 
     if (!baselineRow || !projRow || !targetRow) {
       console.error(
-        "Missing one of the required years: 2024 (baseline), 2025 (projected), 2026 (target)."
+        "Missing one of the required years: 2025 (baseline), 2026 (projected), 2027 (target)."
       );
       return;
     }

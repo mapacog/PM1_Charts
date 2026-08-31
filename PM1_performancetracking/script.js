@@ -58,7 +58,7 @@ function toNum(val) {
   document.head.appendChild(style);
 })();
 
-d3.csv("PM1_Viewer.csv")
+d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
   .then(function (rows) {
     if (!rows || !rows.length) {
       console.error("PM1_Viewer.csv appears empty or failed to load.");
@@ -74,17 +74,16 @@ d3.csv("PM1_Viewer.csv")
       }
     });
 
-    // 🔁 Updated years:
-    const baselineYear = 2022; // Baseline
-    const projYear = 2024;     // Projected & Observed
-    const targetYear = 2026;   // Targets
+    const baselineYear = 2023; // Previous adopted baseline
+    const projYear = 2025;     // Projected & Observed main year
+    const targetYear = 2027;   // Current state target year
 
     const baselineRow = byYear[baselineYear];
     const projRow = byYear[projYear];
     const targetRow = byYear[targetYear];
 
     if (!baselineRow || !projRow || !targetRow) {
-      console.error("Missing one of the required years: 2022 (baseline), 2024 (proj/obs), 2026 (targets).");
+      console.error("Missing one of the required years: 2023 (baseline), 2025 (proj/obs), 2027 (targets).");
       return;
     }
 

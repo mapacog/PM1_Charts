@@ -1,0 +1,59 @@
+html,
+body {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  overflow-x: hidden;
+}
+
+#page {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#chart {
+  box-sizing: border-box;
+  min-width: 0;
+  height: clamp(420px, calc(100vh - 68px), 680px);
+}
+
+#chart .svg-container,
+#chart .main-svg {
+  max-width: 100%;
+}
+
+@media (max-width: 700px) {
+  #page {
+    padding: 8px 6px 12px;
+  }
+
+  h1,
+  .page-title {
+    margin-bottom: 4px;
+    font-size: 1.25rem;
+    line-height: 1.2;
+  }
+
+  .page-title .subtitle {
+    font-size: 1rem;
+  }
+
+  #chart {
+    height: clamp(560px, calc(100vh - 48px), 720px);
+  }
+
+  #chart .modebar-container {
+    transform: scale(0.82);
+    transform-origin: top right;
+  }
+}
+
+html.pm1-gauge #chart {
+  height: clamp(260px, 50vh, 360px);
+}
+
+@media (max-width: 700px) {
+  html.pm1-gauge #chart {
+    height: clamp(250px, 75vw, 330px);
+  }
+}

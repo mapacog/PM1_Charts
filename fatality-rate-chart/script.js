@@ -6,7 +6,7 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
-d3.csv("PM1_Viewer.csv")
+d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
   .then(function (rows) {
     const years = [];
     const fatalRate = [];
@@ -27,14 +27,24 @@ d3.csv("PM1_Viewer.csv")
 
     const shapes = [];
 
-    const projLabelOffset = 0.1   // projection labels a bit above points
-    const targetLabelOffset = 0.1; // target labels higher above points
+    const projLabelOffset = 0.12;  // raise the projection label above its leader
+    const targetLabelOffset = 0.22; // stagger the adjacent target label
+
+    const activeEndYear = Math.max(...rows
+      .filter(row => [
+        "Fatality Rate", "Fatality Rate (5-yr avg)",
+        "Fatality Rate Projection (Past)", "Fatality Rate Projection (Current)",
+        "Fatality Rate Target (Past)", "Fatality Rate Target (Current)",
+        "Fatality Rate Trend",
+      ].some(column => toNum(row[column]) != null))
+      .map(row => parseInt(row["Year"], 10))
+      .filter(year => !Number.isNaN(year)));
 
     rows.forEach((row) => {
       const year = parseInt(row["Year"], 10);
       if (Number.isNaN(year)) return;
 
-      if (year < 2006) return;
+      if (year < 2006 || year > activeEndYear) return;
 
       const frate = toNum(row["Fatality Rate"]);
       const frate5 = toNum(row["Fatality Rate (5-yr avg)"]);
@@ -234,6 +244,7 @@ d3.csv("PM1_Viewer.csv")
     const layout = {
       title: "",
       xaxis: {
+        range: [years[0] - 0.5, activeEndYear + 0.5],
         title: "",
         tickmode: "linear",
         dtick: 1,
