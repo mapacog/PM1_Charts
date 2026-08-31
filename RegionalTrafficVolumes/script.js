@@ -6,6 +6,15 @@ function toNum(val) {
   return Number.isNaN(n) ? null : n;
 }
 
+function niceTickStep(rawStep) {
+  if (!Number.isFinite(rawStep) || rawStep <= 0) return 1;
+  const magnitude = 10 ** Math.floor(Math.log10(rawStep));
+  const normalized = rawStep / magnitude;
+  const niceNormalized =
+    normalized <= 1 ? 1 : normalized <= 2 ? 2 : normalized <= 5 ? 5 : 10;
+  return niceNormalized * magnitude;
+}
+
 d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
   .then(function (rows) {
     if (!rows || !rows.length) {
@@ -66,6 +75,21 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
       }
     });
 
+    // Preserve useful scale context without returning to a zero baseline.
+    // The preferred floor is 2,500 million VMT; the upper bound and rounded
+    // intervals continue to expand automatically with future VMT values.
+    const plottedVmt = [...vmtActual, ...vmtEst].filter(Number.isFinite);
+    const minVmt = Math.min(...plottedVmt);
+    const maxVmt = Math.max(...plottedVmt);
+    const rawSpan = maxVmt - minVmt;
+    const span = rawSpan > 0 ? rawSpan : Math.max(Math.abs(minVmt) * 0.1, 1);
+    const preferredFloor = 2500;
+    const dataFloor = Math.floor((minVmt - span * 0.1) / 500) * 500;
+    const yAxisMin = Math.min(preferredFloor, dataFloor);
+    const yTickStep = niceTickStep((maxVmt - yAxisMin) / 6);
+    const yPadding = Math.max(span * 0.12, yTickStep * 0.5);
+    const yAxisMax = Math.ceil((maxVmt + yPadding) / yTickStep) * yTickStep;
+
     // === Traces ===
 
     // Solid line: historical VMT through the current main year.
@@ -107,12 +131,20 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
         gridcolor: "rgba(0,0,0,0.1)",
         zeroline: false,
         tickangle: -45,
+        showline: true,
+        linecolor: "rgba(60,60,60,0.75)",
+        linewidth: 1.5,
       },
       yaxis: {
         title: "Million Vehicle Miles Traveled",
-        rangemode: "tozero",
+        range: [yAxisMin, yAxisMax],
+        tick0: yAxisMin,
+        dtick: yTickStep,
+        tickformat: ",.0f",
         showgrid: true,              // horizontal grid lines
         gridcolor: "rgba(0,0,0,0.1)",
+        zeroline: false,
+        showline: false,
       },
       hovermode: "x unified",
       legend: {
