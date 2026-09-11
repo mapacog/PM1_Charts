@@ -1,11 +1,13 @@
 (function enableResponsivePm1Chart() {
   const MOBILE_BREAKPOINT = 700;
+  const INTERACTION_BREAKPOINT = 1024;
   const chart = document.getElementById("chart");
   if (!chart) return;
 
   let initialized = false;
   let originalLayout = null;
   let lastMobileState = null;
+  let lastInteractionLocked = null;
   let resizeObserver = null;
   let animationFrame = null;
 
@@ -27,6 +29,7 @@
     const margin = layout.margin || {};
     const legend = layout.legend || {};
     const xaxis = layout.xaxis || {};
+    const yaxis = layout.yaxis || {};
 
     return {
       margin: {
@@ -48,10 +51,13 @@
         dtick: valueOrNull(xaxis.dtick),
         tickangle: valueOrNull(xaxis.tickangle),
         automargin: valueOrNull(xaxis.automargin),
+        fixedrange: valueOrNull(xaxis.fixedrange),
       },
-      yaxisAutomargin: valueOrNull(
-        layout.yaxis && layout.yaxis.automargin
-      ),
+      yaxis: {
+        automargin: valueOrNull(yaxis.automargin),
+        fixedrange: valueOrNull(yaxis.fixedrange),
+      },
+      dragmode: valueOrNull(layout.dragmode),
     };
   }
 
@@ -92,6 +98,11 @@
       (chart.parentElement && chart.parentElement.clientWidth) ||
       document.documentElement.clientWidth;
     const isMobile = availableWidth <= MOBILE_BREAKPOINT;
+    const hasCoarsePointer = Boolean(
+      window.matchMedia && window.matchMedia("(pointer: coarse)").matches
+    );
+    const interactionLocked =
+      availableWidth <= INTERACTION_BREAKPOINT || hasCoarsePointer;
     const isGauge = chart.data.every((trace) => trace.type === "indicator");
 
     if (isGauge) {
@@ -99,11 +110,15 @@
       return;
     }
 
-    if (isMobile === lastMobileState) {
+    if (
+      isMobile === lastMobileState &&
+      interactionLocked === lastInteractionLocked
+    ) {
       window.Plotly.Plots.resize(chart);
       return;
     }
     lastMobileState = isMobile;
+    lastInteractionLocked = interactionLocked;
 
     const originalDtick = Number(originalLayout.xaxis.dtick);
     const mobileDtick = Number.isFinite(originalDtick)
@@ -149,8 +164,16 @@
           "xaxis.dtick": originalLayout.xaxis.dtick,
           "xaxis.tickangle": originalLayout.xaxis.tickangle,
           "xaxis.automargin": originalLayout.xaxis.automargin,
-          "yaxis.automargin": originalLayout.yaxisAutomargin,
+          "yaxis.automargin": originalLayout.yaxis.automargin,
         };
+
+    updates.dragmode = interactionLocked ? false : originalLayout.dragmode;
+    updates["xaxis.fixedrange"] = interactionLocked
+      ? true
+      : originalLayout.xaxis.fixedrange;
+    updates["yaxis.fixedrange"] = interactionLocked
+      ? true
+      : originalLayout.yaxis.fixedrange;
 
     window.Plotly.relayout(chart, updates).then(function () {
       window.Plotly.Plots.resize(chart);
