@@ -46,6 +46,8 @@ d3.csv("PM1_PolicyTargetSetting.csv")
     const labelY = [];
     const labelText = [];
     const shapes = [];
+
+    const TARGET_LABEL_YEAR = 2026;
     const labelOffset = 4; 
 
     rows.forEach((row) => {
@@ -57,8 +59,11 @@ d3.csv("PM1_PolicyTargetSetting.csv")
 
       const proj = toNum(row["Projected Total Fatalities"]);
       const roll = toNum(row["Fatalities (5-Year Rolling Average)"]);
-      const trend = toNum(row["Trendline for Fatalities (5-Year Rolling Average)"]) 
-      const tgt  = toNum(row["Fatalities Target"]);
+      const trend = toNum(row["Trendline for Fatalities (5-Year Rolling Average)"]);
+      const targetFromCsv = toNum(row["Fatalities Target"]);
+      const tgt = targetFromCsv ?? (
+        year === TARGET_LABEL_YEAR ? trend : null
+      );
 
       years.push(year);
       projFatal.push(proj);

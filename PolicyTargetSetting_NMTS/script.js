@@ -48,6 +48,8 @@ d3.csv("PM1_PolicyTargetSetting.csv")
     const labelY = [];
     const labelText = [];
     const shapes = [];
+
+    const TARGET_LABEL_YEAR = 2026;
     const labelOffset = 6; // vertical gap between marker and label
 
     rows.forEach((row) => {
@@ -62,7 +64,10 @@ d3.csv("PM1_PolicyTargetSetting.csv")
       const trend = toNum(
         row["Trendline for Non-Motorist Fatal and Serious Injuries (5 - Year Rolling Average)"]
       );
-      const tgt   = toNum(row["NMT FSI Targets"]);
+      const targetFromCsv = toNum(row["NMT FSI Targets"]);
+      const tgt = targetFromCsv ?? (
+        year === TARGET_LABEL_YEAR ? trend : null
+      );
 
       years.push(year);
       projNMT.push(proj);

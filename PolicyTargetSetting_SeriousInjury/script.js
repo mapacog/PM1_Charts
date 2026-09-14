@@ -47,6 +47,8 @@ d3.csv("PM1_PolicyTargetSetting.csv")
     const labelText = [];
     const shapes = [];
 
+    const TARGET_LABEL_YEAR = 2026;
+
     // Bigger offset so lines are visible with 400–500 range
     const labelOffset = 25; // pixels in data units
 
@@ -60,7 +62,10 @@ d3.csv("PM1_PolicyTargetSetting.csv")
       const proj = toNum(row["Projected Total Serious Injuries"]);
       const roll = toNum(row["Serious Injuries (5-Year Rolling Average)"]);
       const trend = toNum(row["Trendline for Serious Injuries (5 - Year Rolling Average)"]);
-      const tgt = toNum(row["Serious Injuries Target"]);
+      const targetFromCsv = toNum(row["Serious Injuries Target"]);
+      const tgt = targetFromCsv ?? (
+        year === TARGET_LABEL_YEAR ? trend : null
+      );
 
       years.push(year);
       projSerious.push(proj);
