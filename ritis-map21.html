@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: white;
+    }
+
+    .crop-window {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    #ritisFrame {
+      position: absolute;
+      top: -42px;
+      left: 0;
+
+      width: 100%;
+      height: calc(100% + 42px);
+
+      border: 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="crop-window">
+    <iframe
+      id="ritisFrame"
+      src="https://pda.ritis.org/suite/dashboard/embed-widget?widgetUuid=dab0d18f-2b38-497b-9ab1-74598bd7a62f"
+      scrolling="no"
+      frameborder="0">
+    </iframe>
+  </div>
+
+</body>
+</html>
