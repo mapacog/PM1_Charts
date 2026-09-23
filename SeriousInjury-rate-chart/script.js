@@ -15,7 +15,11 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
     const projPast = [];
     const projCurrent = [];
     const targetPast = [];
-    const trend = [];
+    const trendYears = [];
+    const trendValues = [];
+
+    const MAIN_YEAR = 2025;
+    const TREND_START_YEAR = MAIN_YEAR - 4;
 
     // For labels + leader lines
     const projLabelX = [];
@@ -71,7 +75,14 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
       projPast.push(projP);
       projCurrent.push(projC);
       targetPast.push(targP);
-      trend.push(trendVal);
+      if (
+        year >= TREND_START_YEAR &&
+        year <= MAIN_YEAR &&
+        trendVal != null
+      ) {
+        trendYears.push(year);
+        trendValues.push(trendVal);
+      }
 
       // Labels + leader lines for Projection (Current)
       if (projC != null) {
@@ -228,8 +239,8 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
 
     // Serious Injury Rate Trend as AREA (from CSV)
     const areaTrend = {
-      x: years,
-      y: trend,
+      x: trendYears,
+      y: trendValues,
       type: "scatter",
       mode: "lines",
       name: "Serious Injury Rate Trend",
