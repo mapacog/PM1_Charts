@@ -47,10 +47,10 @@ d3.csv("PM1_PolicyTargetSetting.csv")
     const labelText = [];
     const shapes = [];
 
-    const TARGET_LABEL_YEAR = 2026;
+    const TARGET_LABEL_YEAR = 2027;
 
     // Bigger offset so lines are visible with 400–500 range
-    const labelOffset = 25; // pixels in data units
+    const labelOffset = 30; // pixels in data units
 
     rows.forEach((row) => {
       const year = parseInt(row["Year"], 10);

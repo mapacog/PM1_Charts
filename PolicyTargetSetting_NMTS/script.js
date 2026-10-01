@@ -49,7 +49,7 @@ d3.csv("PM1_PolicyTargetSetting.csv")
     const labelText = [];
     const shapes = [];
 
-    const TARGET_LABEL_YEAR = 2026;
+    const TARGET_LABEL_YEAR = 2027;
     const labelOffset = 6; // vertical gap between marker and label
 
     rows.forEach((row) => {
