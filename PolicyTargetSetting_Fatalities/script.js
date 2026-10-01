@@ -48,7 +48,7 @@ d3.csv("PM1_PolicyTargetSetting.csv")
     const shapes = [];
 
     const TARGET_LABEL_YEAR = 2027;
-    const labelOffset = 4; 
+    const labelOffset = 5; 
 
     rows.forEach((row) => {
       const year = parseInt(row["Year"], 10);
