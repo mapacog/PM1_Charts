@@ -103,7 +103,7 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
     const config = {
       responsive: true,
       displayModeBar: true,
-      scrollZoom: true,
+      scrollZoom: false,
       editable: false,
       displaylogo: false  // his removes the Plotly trademark
     };

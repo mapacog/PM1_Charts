@@ -15,7 +15,11 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
     const projCurrent = [];
     const targetPast = [];
     const targetCurrent = [];
-    const trend = [];
+    const trendYears = [];
+    const trendValues = [];
+
+    const MAIN_YEAR = 2025;
+    const TREND_START_YEAR = MAIN_YEAR - 4;
 
     // For labels + leader lines (Current projection/target)
     const projLabelX = [];
@@ -66,7 +70,14 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
       projCurrent.push(projC);
       targetPast.push(targP);
       targetCurrent.push(targC);
-      trend.push(trendVal);
+      if (
+        year >= TREND_START_YEAR &&
+        year <= MAIN_YEAR &&
+        trendVal != null
+      ) {
+        trendYears.push(year);
+        trendValues.push(trendVal);
+      }
 
       // === Projection (Current) labels + dashed leader lines ===
       if (projC != null) {
@@ -244,8 +255,8 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
 
     // Fatalities Trend as area (from CSV)
     const areaTrend = {
-      x: years,
-      y: trend,
+      x: trendYears,
+      y: trendValues,
       type: "scatter",
       mode: "lines",
       name: "Fatalities Trend",
@@ -274,12 +285,14 @@ d3.csv(`PM1_Viewer.csv?ts=${Date.now()}`)
     const layout = {
       title: "",
       xaxis: {
-        range: [years[0] - 0.5, activeEndYear + 0.5],
+        range: [years[0] - 0.5, activeEndYear + 0.75],
         tickmode: "linear",
+        tick0: 2026,
         dtick: 1,
         showgrid: false,
         zeroline: false,
         tickangle: -45,
+        automargin: true,
       },
       yaxis: {
         title: "Number of Fatalities",
